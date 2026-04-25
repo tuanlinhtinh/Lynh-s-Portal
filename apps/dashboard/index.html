@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="../../theme.css"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { min-height: 100vh; background: var(--bg); color: var(--text); font-family: var(--font-body); display: flex; flex-direction: column; align-items: center; padding: var(--space-xl) var(--space-md); }
+    .back { align-self: flex-start; display: inline-flex; align-items: center; gap: 0.4rem; text-decoration: none; color: var(--accent); font-size: 0.85rem; font-family: var(--font-display); letter-spacing: 0.04em; margin-bottom: 2rem; opacity: 0.8; transition: opacity 0.15s; }
+    .back:hover { opacity: 1; }
+    .hero { display: flex; flex-direction: column; align-items: center; gap: 1rem; text-align: center; }
+    .hero-icon { font-size: 4rem; }
+    h1 { font-family: var(--font-display); font-size: 2.2rem; font-weight: 700; color: var(--accent); letter-spacing: -0.03em; }
+    p { color: var(--text-muted); line-height: 1.6; max-width: 440px; }
+    .placeholder { margin-top: 3rem; border: 1px dashed #2a2e3d; border-radius: var(--radius); padding: 2.5rem 3rem; color: var(--text-muted); font-size: 0.85rem; opacity: 0.5; letter-spacing: 0.04em; }
+  </style>
+</head>
+<body>
+  <a class="back" href="../../index.html">← Back to Portal</a>
+  <div class="hero">
+    <span class="hero-icon">📊</span>
+    <h1>Dashboard</h1>
+    <p>This is the <strong>Dashboard</strong> page. Replace this content with your own HTML or application.</p>
+  </div>
+  <div class="placeholder">[ YOUR CONTENT GOES HERE ]</div>
+</body>
+</html>

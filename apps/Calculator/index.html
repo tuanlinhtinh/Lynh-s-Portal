@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Tools</title>
+    <link rel="stylesheet" href="styles.css">
+	<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="main-tabs">
+            <button class="main-tab active" onclick="switchMainTab('geometry')">Geometry Calculator</button>
+            <button class="main-tab" onclick="switchMainTab('ratio')">Ratio</button>
+            <button class="main-tab" onclick="switchMainTab('sensor')">Sensor Calculator</button>
+        </div>
+        <div class="main-tab-content active" id="geometry">
+            <div class="sub-tabs">
+                <button class="sub-tab active" onclick="switchSubTab('triangle')">Triangle</button>
+                <button class="sub-tab" onclick="switchSubTab('circle')">Circle</button>
+                <button class="sub-tab" onclick="switchSubTab('rectangle')">Rectangle</button>
+                <button class="sub-tab" onclick="switchSubTab('cylinder')">Cylinder</button>
+                <button class="sub-tab" onclick="switchSubTab('cone')">Cone</button>
+                <button class="sub-tab" onclick="switchSubTab('pyramid')">Pyramid</button>
+            </div>
+            <div class="sub-tab-content active" id="triangle">
+                <div class="content-vertical">
+                    <div class="image-section">
+                        <img src="images/triangle.png" alt="Triangle" class="large-image">
+                    </div>
+                    <div class="calc-section">
+                        <div class="input-group">
+                            <label>Side a:</label>
+                            <input type="number" id="tri-a" oninput="calculateTriangle()" min="0">
+                            <label>Side b:</label>
+                            <input type="number" id="tri-b" oninput="calculateTriangle()" min="0">
+                            <label>Side c:</label>
+                            <input type="number" id="tri-c" oninput="calculateTriangle()" min="0">
+                            <label>Height:</label>
+                            <input type="number" id="tri-h" oninput="calculateTriangle()" min="0">
+                        </div>
+                        <div class="results-box">
+                            <p>Perimeter = <span id="tri-perimeter">-</span></p>
+                            <p>Area = <span id="tri-area">-</span></p>
+                            <p>Volume = <span id="tri-volume">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sub-tab-content" id="circle">
+                <div class="content-vertical">
+                    <div class="image-section">
+                        <img src="images/circle.png" alt="Circle" class="large-image">
+                    </div>
+                    <div class="calc-section">
+                        <div class="input-group">
+                            <label>Radius:</label>
+                            <input type="number" id="circ-radius" oninput="calculateCircle()" min="0">
+                        </div>
+                        <div class="results-box">
+                            <p>Circumference = <span id="circ-circumference">-</span></p>
+                            <p>Area = <span id="circ-area">-</span></p>
+                            <p>Sphere Volume = <span id="circ-volume">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sub-tab-content" id="rectangle">
+                <div class="content-vertical">
+                    <div class="image-section">
+                        <img src="images/rectangle.png" alt="Rectangle" class="large-image">
+                    </div>
+                    <div class="calc-section">
+                        <div class="input-group">
+                            <label>Length:</label>
+                            <input type="number" id="rect-length" oninput="calculateRectangle()" min="0">
+                            <label>Width:</label>
+                            <input type="number" id="rect-width" oninput="calculateRectangle()" min="0">
+                            <label>Height:</label>
+                            <input type="number" id="rect-height" oninput="calculateRectangle()" min="0">
+                        </div>
+                        <div class="results-box">
+                            <p>Perimeter = <span id="rect-perimeter">-</span></p>
+                            <p>Area = <span id="rect-area">-</span></p>
+                            <p>Volume = <span id="rect-volume">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sub-tab-content" id="cylinder">
+                <div class="content-vertical">
+                    <div class="image-section">
+                        <img src="images/cylinder.png" alt="Cylinder" class="large-image">
+                    </div>
+                    <div class="calc-section">
+                        <div class="input-group">
+                            <label>Radius:</label>
+                            <input type="number" id="cyl-radius" oninput="calculateCylinder()" min="0">
+                            <label>Circumference:</label>
+                            <input type="number" id="cyl-circumference" oninput="calculateCylinder()" min="0">
+                            <label>Height:</label>
+                            <input type="number" id="cyl-height" oninput="calculateCylinder()" min="0">
+                        </div>
+                        <div class="results-box">
+                            <p>Volume = <span id="cyl-volume">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sub-tab-content" id="cone">
+                <div class="content-vertical">
+                    <div class="image-section">
+                        <img src="images/cone.png" alt="Cone" class="large-image">
+                    </div>
+                    <div class="calc-section">
+                        <div class="input-group">
+                            <label>Radius:</label>
+                            <input type="number" id="cone-radius" oninput="calculateCone()" min="0">
+                            <label>Circumference:</label>
+                            <input type="number" id="cone-circumference" oninput="calculateCone()" min="0">
+                            <label>Height:</label>
+                            <input type="number" id="cone-height" oninput="calculateCone()" min="0">
+                        </div>
+                        <div class="results-box">
+                            <p>Volume = <span id="cone-volume">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="sub-tab-content" id="pyramid">
+                <div class="content-vertical">
+                    <div class="image-section">
+                        <img src="images/pyramid.png" alt="Pyramid" class="large-image">
+                    </div>
+                    <div class="calc-section">
+                        <div class="input-group">
+                            <label>Base Length:</label>
+                            <input type="number" id="pyr-length" oninput="calculatePyramid()" min="0">
+                            <label>Base Width:</label>
+                            <input type="number" id="pyr-width" oninput="calculatePyramid()" min="0">
+                            <label>Height:</label>
+                            <input type="number" id="pyr-height" oninput="calculatePyramid()" min="0">
+                        </div>
+                        <div class="results-box">
+                            <p>Volume = <span id="pyr-volume">-</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main-tab-content" id="ratio">
+            <div class="content-vertical">
+                <div class="ratio-input-group">
+                    <input type="number" id="ratio-a" oninput="updateRatio('a')" onchange="updateRatio('a')" min="0" class="ratio-input">
+                    <input type="number" id="ratio-b" oninput="updateRatio('b')" onchange="updateRatio('b')" min="0" class="ratio-input">
+                </div>
+                <button class="keep-ratio-btn" id="keep-ratio-btn" onclick="keepRatio()">Keep Ratio</button>
+                <div class="results-box">
+                    <p>Ratio (A/B) = <span id="ratio-result">-</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="main-tab-content" id="sensor">
+            <div class="content-vertical">
+                <div class="image-section">
+                </div>
+                <div class="calc-section">
+                    <div class="input-group">
+                        <label>Width Pixel:</label>
+                        <input type="number" id="sensor-width-pixel" oninput="calculateSensor()" min="0">
+                        <label>Height Pixel:</label>
+                        <input type="number" id="sensor-height-pixel" oninput="calculateSensor()" min="0">
+                        <label>Pixel Size (µm):</label>
+                        <input type="number" id="sensor-pixel-size" oninput="calculateSensor()" min="0" value="4.4">
+                    </div>
+                    <div class="results-box">
+                        <p>Sensor Length (mm): <span id="sensor-length">-</span></p>
+                        <p>Sensor Height (mm): <span id="sensor-height">-</span></p>
+                        <p>Sensor Diagonal (mm): <span id="sensor-diagonal">-</span></p>
+                        <p>Sensor Ratio: <span id="sensor-ratio">-</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
