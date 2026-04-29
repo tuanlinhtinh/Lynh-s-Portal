@@ -8,26 +8,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
 :root {
-  --bg:           #0d0e14;
-  --surface:      #16181f;
-  --surface2:     #1e2028;
+  --bg:           #0c0c0c;
+  --surface:      #1b1b1b;
+  --surface2:     #1f1f1f;
   --border:       rgba(255,255,255,0.07);
-  --accent:       #7c6aff;
-  --accent2:      #ff6a9e;
-  --accent3:      #6affd4;
+  --accent:       #216b1b;
+  --accent2:      #a6e417;
+  --accent3:      #fff56a;
   --text:         #e8e9f0;
-  --text-dim:     #6b6e82;
-  --text-ph:      rgba(107,110,130,0.45);
-  --node-bg:      #1e2028;
-  --node-border:  rgba(124,106,255,0.35);
-  --wire:         rgba(124,106,255,0.65);
-  --dot:          #7c6aff;
+  --text-dim:     #9e9faa;
+  --text-ph:      rgba(152, 154, 163, 0.45);
+  --node-bg:      #202020;
+  --node-border:  rgba(255, 255, 255, 0.35);
+  --wire:         rgba(194, 194, 194, 0.65);
+  --dot:          #444444;
   --shadow:       0 8px 32px rgba(0,0,0,0.6);
   --shadow-node:  0 4px 24px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.03);
   --shadow-hover: 0 4px 32px rgba(0,0,0,0.5),0 0 20px rgba(124,106,255,0.12);
   --shadow-sel:   0 4px 32px rgba(0,0,0,0.5),0 0 0 3px rgba(124,106,255,0.2);
-  --font-ui:      'DM Sans', sans-serif;
-  --font-display: 'Syne', sans-serif;
+  --font-ui:      'JetBrains Mono', monospace;
+  --font-display: 'Nunito', sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{
@@ -41,7 +41,7 @@ body{
   display:flex;gap:6px;align-items:center;
   background:var(--surface);border:1px solid var(--border);border-radius:14px;
   padding:8px 12px;
-  box-shadow:var(--shadow),0 0 0 1px rgba(124,106,255,0.1);
+  box-shadow:var(--shadow),0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 .logo{
   font-family:var(--font-display);font-weight:800;font-size:15px;
@@ -57,7 +57,7 @@ body{
   transition:all 0.15s;white-space:nowrap;
 }
 .tb-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border);}
-.tb-btn.active{background:rgba(124,106,255,0.15);color:var(--accent);border-color:rgba(124,106,255,0.3);}
+.tb-btn.active{background:rgba(148, 255, 106, 0.15);color:var(--accent);border-color:rgba(148, 255, 106, 0.3);}
 .tb-btn svg{flex-shrink:0;}
 .tb-sep{width:1px;height:22px;background:var(--border);margin:0 2px;}
 
@@ -120,7 +120,7 @@ body{
 
 #lasso{
   position:absolute;
-  border:1.5px dashed rgba(124,106,255,0.6);background:rgba(124,106,255,0.06);
+  border:1.5px dashed rgba(198, 255, 106, 0.6);background:rgba(210, 255, 106, 0.06);
   border-radius:4px;pointer-events:none;z-index:50;display:none;
 }
 
@@ -196,23 +196,23 @@ body{
 .wire{
   fill:none;stroke:var(--wire);stroke-width:2;
   stroke-linecap:round;stroke-linejoin:round;
-  filter:drop-shadow(0 0 3px rgba(124,106,255,0.3));
+  filter:drop-shadow(0 0 3px rgba(161, 255, 106, 0.3));
   cursor:pointer;pointer-events:stroke;
   transition:stroke 0.15s,stroke-width 0.15s;
 }
 .wire:hover{stroke:var(--accent2);stroke-width:2.5;}
-.wire.selected{stroke:var(--accent2);stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(255,106,158,0.5));}
-.wire-preview{fill:none;stroke:rgba(124,106,255,0.35);stroke-width:2;stroke-dasharray:6 4;stroke-linecap:round;pointer-events:none;}
+.wire.selected{stroke:var(--accent2);stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(253, 255, 106, 0.5));}
+.wire-preview{fill:none;stroke:rgba(203, 255, 106, 0.35);stroke-width:2;stroke-dasharray:6 4;stroke-linecap:round;pointer-events:none;}
 .bp-handle{fill:var(--surface);stroke:var(--accent);stroke-width:1.5;cursor:move;pointer-events:all;transition:fill 0.1s;}
 .bp-handle:hover{fill:var(--accent);}
-.wire-mid-dot{fill:rgba(124,106,255,0.3);stroke:var(--accent);stroke-width:1.5;cursor:crosshair;pointer-events:all;opacity:0;transition:opacity 0.15s;}
+.wire-mid-dot{fill:rgba(161, 255, 106, 0.3);stroke:var(--accent);stroke-width:1.5;cursor:crosshair;pointer-events:all;opacity:0;transition:opacity 0.15s;}
 .wire-mid-dot:hover{opacity:1;}
 
 /* Lines */
 .line-el{position:absolute;z-index:8;cursor:pointer;pointer-events:none;}
 .line-el svg{overflow:visible;pointer-events:all;}
 .line-el .line-path{
-  fill:none;stroke:rgba(255,255,255,0.35);stroke-width:2;
+  fill:none;stroke:rgba(56, 194, 43, 0.35);stroke-width:2;
   stroke-linecap:round;cursor:move;pointer-events:stroke;transition:stroke 0.15s;
 }
 .line-el.selected .line-path{stroke:var(--accent2);filter:drop-shadow(0 0 5px rgba(255,106,158,0.5));}
