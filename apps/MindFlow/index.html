@@ -168,9 +168,6 @@ body{
   outline:none;border:none;background:transparent;
   width:100%;resize:none;overflow:hidden;margin-top:6px;line-height:1.6;min-height:0;
 }
-/* Hide body field entirely when it has no content AND nothing inside the node is focused.
-   The node gets .editing class when any textarea is focused. */
-.node-text.body-empty:not(.editing) .node-body{display:none;}
 .node-title::placeholder,.node-body::placeholder{color:var(--text-ph);}
 
 .node-image .node-inner{padding:6px;background:var(--surface2);}
@@ -295,6 +292,10 @@ body.line-mode{cursor:crosshair;}
 <!-- TOOLBAR -->
 <div id="toolbar">
   <span class="logo">MindFlow</span>
+  <button class="tb-btn" id="btn-add-title">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 4h8M7 4v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    Title
+  </button>
   <button class="tb-btn" id="btn-add-text">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 7h6M7 4v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     Text
@@ -564,7 +565,11 @@ function renderNode(node) {
   let el = document.getElementById(node.id);
   if (!el) {
     el = document.createElement('div');
-    el.id = node.id; el.className = 'node node-'+node.type;
+    el.id = node.id;
+    // Use 'titlebox' as the class suffix for title-only nodes so the outer
+    // div doesn't collide with the .node-title textarea selector.
+    const cls = node.type === 'title' ? 'titlebox' : node.type;
+    el.className = 'node node-' + cls;
     canvasEl.appendChild(el);
     bindNodeOuterEvents(el, node);
   }
@@ -584,11 +589,14 @@ function renderNode(node) {
   if (node.type === 'text') {
     el.innerHTML = `<div class="node-inner">
       <textarea class="node-title" placeholder="Title..." rows="1" style="font-size:${node.fontSize}px">${esc(node.title)}</textarea>
-      <textarea class="node-body" placeholder="Notes..." rows="2" style="font-size:${Math.max(10, (node.fontSize||14) - 2)}px">${esc(node.body)}</textarea>
+      <textarea class="node-body"  placeholder="Notes..." rows="2" style="font-size:${Math.max(10,(node.fontSize||14)-2)}px">${esc(node.body)}</textarea>
       ${rotSvg}${resizeSvg}${connDots}
     </div>`;
-    // Toggle body visibility based on whether it has content
-    el.classList.toggle('body-empty', !(node.body || '').trim());
+  } else if (node.type === 'title') {
+    el.innerHTML = `<div class="node-inner">
+      <textarea class="node-title" placeholder="Title..." rows="1" style="font-size:${node.fontSize}px">${esc(node.title)}</textarea>
+      ${rotSvg}${resizeSvg}${connDots}
+    </div>`;
   } else {
     el.innerHTML = `<div class="node-inner" style="width:${node.w||220}px">
       <img src="${node.imgSrc}" draggable="false" alt="">
@@ -639,11 +647,6 @@ function bindNodeOuterEvents(el, node) {
 function bindNodeInnerEvents(el, node) {
   el.querySelectorAll('textarea').forEach(ta => {
     autoH(ta);
-    ta.addEventListener('focus', () => el.classList.add('editing'));
-    ta.addEventListener('blur', () => {
-      el.classList.remove('editing');
-      el.classList.toggle('body-empty', !(node.body || '').trim());
-    });
     ta.addEventListener('input', () => {
       autoH(ta);
       if (ta.classList.contains('node-title')) node.title = ta.value;
@@ -671,7 +674,7 @@ function bindNodeInnerEvents(el, node) {
   if (rs) rs.addEventListener('mousedown', e => {
     e.stopPropagation(); e.preventDefault();
     resizingNode = node;
-    if (node.type === 'text') {
+    if (node.type === 'text' || node.type === 'title') {
       resizeStartFontSize = node.fontSize || 14;
     } else {
       resizeStartW = node.w || 220;
@@ -1250,21 +1253,17 @@ document.addEventListener('mousemove', e => {
     return;
   }
   if (resizingNode) {
-    if (resizingNode.type === 'text') {
-      // Use the larger of horizontal/vertical drag distance to scale font size.
-      // Drag away from top-left = bigger; drag toward = smaller.
+    if (resizingNode.type === 'text' || resizingNode.type === 'title') {
+      // Drag away from top-left = bigger font; drag toward = smaller.
       const dx = (e.clientX - resizeStartMX) / zoom;
       const dy = (e.clientY - resizeStartMY) / zoom;
-      const delta = (dx + dy) / 2;  // average so both axes contribute
+      const delta = (dx + dy) / 2;
       const newSize = Math.max(8, Math.min(64, resizeStartFontSize + delta * 0.18));
       resizingNode.fontSize = newSize;
       const titleTa = document.querySelector('#'+resizingNode.id+' .node-title');
       const bodyTa  = document.querySelector('#'+resizingNode.id+' .node-body');
-      if (titleTa) titleTa.style.fontSize = newSize + 'px';
-      if (bodyTa)  bodyTa.style.fontSize  = Math.max(10, newSize - 2) + 'px';
-      // Re-fit textarea heights
-      if (titleTa) autoH(titleTa);
-      if (bodyTa)  autoH(bodyTa);
+      if (titleTa) { titleTa.style.fontSize = newSize + 'px'; autoH(titleTa); }
+      if (bodyTa)  { bodyTa.style.fontSize  = Math.max(10, newSize - 2) + 'px'; autoH(bodyTa); }
     } else {
       resizingNode.w = Math.max(80, resizeStartW + (e.clientX - resizeStartMX) / zoom);
       const inner = document.querySelector('#'+resizingNode.id+' .node-inner');
@@ -1375,6 +1374,14 @@ document.getElementById('btn-fit').addEventListener('click', fitAll);
 // ═══════════════════════════════════════════════════════════════════════
 // TOOLBAR ADD/IMPORT
 // ═══════════════════════════════════════════════════════════════════════
+document.getElementById('btn-add-title').addEventListener('click', () => {
+  setTool('select');
+  const c = viewportCentre();
+  const node = createNode('title', c.x - 60 + (Math.random()-.5)*40, c.y - 14 + (Math.random()-.5)*40);
+  selectNode(node.id, true);
+  setTimeout(() => { document.querySelector('#'+node.id+' .node-title')?.focus(); }, 50);
+});
+
 document.getElementById('btn-add-text').addEventListener('click', () => {
   setTool('select');
   const c = viewportCentre();
@@ -1622,10 +1629,10 @@ if (!state.nodes.length) {
   const cx = r.width / 2;
   const cy = r.height / 2;
 
-  const n1 = createNode('text', cx - 80,  cy - 30, { title: '🧠 My Mind Map', body: 'Double-click → add node\nRight-drag → multi-select\nDrag corner → resize text', fontSize: 16 });
-  const n2 = createNode('text', cx + 200, cy - 90, { title: 'Idea A' });
-  const n3 = createNode('text', cx + 200, cy + 40, { title: 'Idea B', body: 'Right-click a wire → Add Breakpoint' });
-  const n4 = createNode('text', cx + 480, cy - 30, { title: 'Idea C' });
+  const n1 = createNode('text',  cx - 80,  cy - 30, { title: '🧠 My Mind Map', body: 'Double-click → add node\nRight-drag → multi-select\nDrag corner → resize text', fontSize: 16 });
+  const n2 = createNode('title', cx + 200, cy - 70, { title: 'Idea A', fontSize: 16 });
+  const n3 = createNode('text',  cx + 200, cy + 30, { title: 'Idea B', body: 'Right-click a wire → Add Breakpoint' });
+  const n4 = createNode('title', cx + 480, cy - 14, { title: 'Idea C', fontSize: 16 });
   createWire(n1.id, 'right', n2.id, 'left');
   createWire(n1.id, 'right', n3.id, 'left');
   createWire(n2.id, 'right', n4.id, 'left');
