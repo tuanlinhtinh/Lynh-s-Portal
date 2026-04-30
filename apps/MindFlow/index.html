@@ -8,26 +8,26 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
 
 :root {
-  --bg:           #0c0c0c;
-  --surface:      #1b1b1b;
-  --surface2:     #1f1f1f;
+  --bg:           #0d0e14;
+  --surface:      #16181f;
+  --surface2:     #1e2028;
   --border:       rgba(255,255,255,0.07);
-  --accent:       #216b1b;
-  --accent2:      #a6e417;
-  --accent3:      #fff56a;
+  --accent:       #7c6aff;
+  --accent2:      #ff6a9e;
+  --accent3:      #6affd4;
   --text:         #e8e9f0;
-  --text-dim:     #9e9faa;
-  --text-ph:      rgba(152, 154, 163, 0.45);
-  --node-bg:      #202020;
-  --node-border:  rgba(255, 255, 255, 0.35);
-  --wire:         rgba(194, 194, 194, 0.65);
-  --dot:          #444444;
+  --text-dim:     #6b6e82;
+  --text-ph:      rgba(107,110,130,0.45);
+  --node-bg:      #1e2028;
+  --node-border:  rgba(124,106,255,0.35);
+  --wire:         rgba(124,106,255,0.65);
+  --dot:          #7c6aff;
   --shadow:       0 8px 32px rgba(0,0,0,0.6);
   --shadow-node:  0 4px 24px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.03);
   --shadow-hover: 0 4px 32px rgba(0,0,0,0.5),0 0 20px rgba(124,106,255,0.12);
   --shadow-sel:   0 4px 32px rgba(0,0,0,0.5),0 0 0 3px rgba(124,106,255,0.2);
-  --font-ui:      'JetBrains Mono', monospace;
-  --font-display: 'Nunito', sans-serif;
+  --font-ui:      'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{
@@ -41,7 +41,7 @@ body{
   display:flex;gap:6px;align-items:center;
   background:var(--surface);border:1px solid var(--border);border-radius:14px;
   padding:8px 12px;
-  box-shadow:var(--shadow),0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow:var(--shadow),0 0 0 1px rgba(124,106,255,0.1);
 }
 .logo{
   font-family:var(--font-display);font-weight:800;font-size:15px;
@@ -57,7 +57,7 @@ body{
   transition:all 0.15s;white-space:nowrap;
 }
 .tb-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border);}
-.tb-btn.active{background:rgba(148, 255, 106, 0.15);color:var(--accent);border-color:rgba(148, 255, 106, 0.3);}
+.tb-btn.active{background:rgba(124,106,255,0.15);color:var(--accent);border-color:rgba(124,106,255,0.3);}
 .tb-btn svg{flex-shrink:0;}
 .tb-sep{width:1px;height:22px;background:var(--border);margin:0 2px;}
 
@@ -118,9 +118,31 @@ body{
 }
 .group-name:focus{color:var(--text);}
 
+/* Group resize handles — 4 corners + 4 edges, only visible when selected */
+.gr-handle{
+  position:absolute;background:var(--accent);border-radius:50%;
+  width:10px;height:10px;z-index:25;
+  border:2px solid var(--bg);
+  opacity:0;transition:opacity 0.15s,transform 0.1s;
+}
+.gr-handle:hover{transform:scale(1.3);}
+.group.selected .gr-handle{opacity:1;}
+.gr-handle[data-pos="nw"]{top:-5px;left:-5px;cursor:nw-resize;}
+.gr-handle[data-pos="ne"]{top:-5px;right:-5px;cursor:ne-resize;}
+.gr-handle[data-pos="sw"]{bottom:-5px;left:-5px;cursor:sw-resize;}
+.gr-handle[data-pos="se"]{bottom:-5px;right:-5px;cursor:se-resize;}
+.gr-handle[data-pos="n"]{top:-5px;left:50%;transform:translateX(-50%);cursor:n-resize;}
+.gr-handle[data-pos="s"]{bottom:-5px;left:50%;transform:translateX(-50%);cursor:s-resize;}
+.gr-handle[data-pos="w"]{left:-5px;top:50%;transform:translateY(-50%);cursor:w-resize;}
+.gr-handle[data-pos="e"]{right:-5px;top:50%;transform:translateY(-50%);cursor:e-resize;}
+.gr-handle[data-pos="n"]:hover{transform:translateX(-50%) scale(1.3);}
+.gr-handle[data-pos="s"]:hover{transform:translateX(-50%) scale(1.3);}
+.gr-handle[data-pos="w"]:hover{transform:translateY(-50%) scale(1.3);}
+.gr-handle[data-pos="e"]:hover{transform:translateY(-50%) scale(1.3);}
+
 #lasso{
   position:absolute;
-  border:1.5px dashed rgba(198, 255, 106, 0.6);background:rgba(210, 255, 106, 0.06);
+  border:1.5px dashed rgba(124,106,255,0.6);background:rgba(124,106,255,0.06);
   border-radius:4px;pointer-events:none;z-index:50;display:none;
 }
 
@@ -146,19 +168,15 @@ body{
   outline:none;border:none;background:transparent;
   width:100%;resize:none;overflow:hidden;margin-top:6px;line-height:1.6;min-height:0;
 }
+/* Hide body field entirely when it has no content AND nothing inside the node is focused.
+   The node gets .editing class when any textarea is focused. */
+.node-text.body-empty:not(.editing) .node-body{display:none;}
 .node-title::placeholder,.node-body::placeholder{color:var(--text-ph);}
-.node-controls{display:none;gap:4px;margin-top:8px;padding-top:8px;border-top:1px solid var(--border);align-items:center;}
-.node.selected .node-controls{display:flex;}
-.font-btn{
-  background:var(--surface2);border:1px solid var(--border);color:var(--text-dim);
-  border-radius:5px;width:22px;height:22px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:10px;cursor:pointer;transition:all 0.1s;
-}
-.font-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+
 .node-image .node-inner{padding:6px;background:var(--surface2);}
 .node-image img{display:block;border-radius:10px;width:100%;height:auto;pointer-events:none;}
 
+/* Resize handle works for both image and text nodes now (text scales font size) */
 .resize-handle{
   position:absolute;bottom:-5px;right:-5px;width:16px;height:16px;
   background:var(--accent);border-radius:50%;cursor:se-resize;z-index:20;
@@ -196,23 +214,23 @@ body{
 .wire{
   fill:none;stroke:var(--wire);stroke-width:2;
   stroke-linecap:round;stroke-linejoin:round;
-  filter:drop-shadow(0 0 3px rgba(161, 255, 106, 0.3));
+  filter:drop-shadow(0 0 3px rgba(124,106,255,0.3));
   cursor:pointer;pointer-events:stroke;
   transition:stroke 0.15s,stroke-width 0.15s;
 }
 .wire:hover{stroke:var(--accent2);stroke-width:2.5;}
-.wire.selected{stroke:var(--accent2);stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(253, 255, 106, 0.5));}
-.wire-preview{fill:none;stroke:rgba(203, 255, 106, 0.35);stroke-width:2;stroke-dasharray:6 4;stroke-linecap:round;pointer-events:none;}
+.wire.selected{stroke:var(--accent2);stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(255,106,158,0.5));}
+.wire-preview{fill:none;stroke:rgba(124,106,255,0.35);stroke-width:2;stroke-dasharray:6 4;stroke-linecap:round;pointer-events:none;}
 .bp-handle{fill:var(--surface);stroke:var(--accent);stroke-width:1.5;cursor:move;pointer-events:all;transition:fill 0.1s;}
 .bp-handle:hover{fill:var(--accent);}
-.wire-mid-dot{fill:rgba(161, 255, 106, 0.3);stroke:var(--accent);stroke-width:1.5;cursor:crosshair;pointer-events:all;opacity:0;transition:opacity 0.15s;}
+.wire-mid-dot{fill:rgba(124,106,255,0.3);stroke:var(--accent);stroke-width:1.5;cursor:crosshair;pointer-events:all;opacity:0;transition:opacity 0.15s;}
 .wire-mid-dot:hover{opacity:1;}
 
 /* Lines */
 .line-el{position:absolute;z-index:8;cursor:pointer;pointer-events:none;}
 .line-el svg{overflow:visible;pointer-events:all;}
 .line-el .line-path{
-  fill:none;stroke:rgba(56, 194, 43, 0.35);stroke-width:2;
+  fill:none;stroke:rgba(255,255,255,0.35);stroke-width:2;
   stroke-linecap:round;cursor:move;pointer-events:stroke;transition:stroke 0.15s;
 }
 .line-el.selected .line-path{stroke:var(--accent2);filter:drop-shadow(0 0 5px rgba(255,106,158,0.5));}
@@ -322,10 +340,14 @@ body.line-mode{cursor:crosshair;}
 <div id="statusbar">
   <span>Zoom: <strong id="zoom-level">100%</strong></span>
   <span>·</span><span id="node-count">0 nodes</span>
-  <span>·</span><span id="hint">Double-click → text · Right-drag → group · Scroll → zoom</span>
+  <span>·</span><span id="hint">Double-click → text · Right-drag → multi-select · Scroll → zoom</span>
 </div>
 
 <div id="ctx-menu">
+  <div class="ctx-item" id="ctx-group" style="display:none">
+    <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="7" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="7" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="7" y="7" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+    Create Group
+  </div>
   <div class="ctx-item" id="ctx-wire" style="display:none">
     <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="2" fill="currentColor"/><path d="M1 6.5h3M9 6.5h3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
     Add Breakpoint
@@ -400,7 +422,9 @@ let draggingBP=null;
 let draggingLine=null,  lineOffAX=0, lineOffAY=0, lineOffBX=0, lineOffBY=0;
 let draggingLineEnd=null;
 let wiringFrom=null, previewWirePath=null;
-let resizingNode=null, resizeStartW=0, resizeStartMX=0;
+let resizingNode=null, resizeStartW=0, resizeStartMX=0, resizeStartMY=0, resizeStartFontSize=14;
+let resizingGroup=null, grResizeMode='', grResizeStart=null;  // {x,y,w,h, mx,my}
+let multiDragStart=null;  // Map<nodeId, {x,y}> for moving multi-selected nodes
 let rotatingNode=null, rotateStartAngle=0;
 let isLassoing=false, lassoStart={x:0,y:0}, lassoRect={x:0,y:0,w:0,h:0};
 let lineDrawing=false, lineDrawStart={x:0,y:0}, linePreviewEl=null;
@@ -555,24 +579,20 @@ function renderNode(node) {
   </svg></div>`;
   const connDots = ['top','bottom','left','right'].map(p =>
     `<div class="conn-dot" data-pos="${p}" data-nodeid="${node.id}"></div>`).join('');
+  const resizeSvg = `<div class="resize-handle"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 7l6-6M4 7l3-3" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg></div>`;
 
   if (node.type === 'text') {
     el.innerHTML = `<div class="node-inner">
       <textarea class="node-title" placeholder="Title..." rows="1" style="font-size:${node.fontSize}px">${esc(node.title)}</textarea>
-      <textarea class="node-body" placeholder="Notes..." rows="2">${esc(node.body)}</textarea>
-      <div class="node-controls">
-        <div class="font-btn" data-action="font-up">A+</div>
-        <div class="font-btn" data-action="font-dn">A−</div>
-      </div>
-      ${rotSvg}${connDots}
+      <textarea class="node-body" placeholder="Notes..." rows="2" style="font-size:${Math.max(10, (node.fontSize||14) - 2)}px">${esc(node.body)}</textarea>
+      ${rotSvg}${resizeSvg}${connDots}
     </div>`;
+    // Toggle body visibility based on whether it has content
+    el.classList.toggle('body-empty', !(node.body || '').trim());
   } else {
     el.innerHTML = `<div class="node-inner" style="width:${node.w||220}px">
       <img src="${node.imgSrc}" draggable="false" alt="">
-      <div class="node-controls"></div>
-      ${rotSvg}
-      <div class="resize-handle"><svg width="8" height="8" viewBox="0 0 8 8" fill="none"><path d="M1 7l6-6M4 7l3-3" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg></div>
-      ${connDots}
+      ${rotSvg}${resizeSvg}${connDots}
     </div>`;
   }
   bindNodeInnerEvents(el, node);
@@ -586,17 +606,31 @@ function bindNodeOuterEvents(el, node) {
     if (t.classList.contains('resize-handle')) return;
     if (t.classList.contains('rotate-handle')) return;
     if (t.tagName === 'TEXTAREA') return;
-    if (t.classList.contains('font-btn')) return;
     if (e.button === 2) return;
     e.stopPropagation();
-    selectNode(node.id, !e.shiftKey);
+    // If clicking a node not in current multi-selection, replace selection.
+    // Shift-click adds to selection.
+    if (e.shiftKey) {
+      selectNode(node.id, false);
+    } else if (!state.selectedIds.has(node.id)) {
+      selectNode(node.id, true);
+    }
+    // Drag all selected nodes together
     draggingNode = node;
     const p = s2c(e.clientX, e.clientY);
     dragOffX = p.x - node.x;
     dragOffY = p.y - node.y;
+    // Snapshot all selected nodes' starting positions for group drag
+    multiDragStart = new Map();
+    state.selectedIds.forEach(id => {
+      const n = state.nodes.find(n => n.id === id);
+      if (n) multiDragStart.set(id, { x: n.x, y: n.y });
+    });
   });
   el.addEventListener('contextmenu', e => {
     e.preventDefault(); e.stopPropagation();
+    // If right-clicking on an unselected node, select just it
+    if (!state.selectedIds.has(node.id)) selectNode(node.id, true);
     ctxTargetId = node.id; ctxTargetType = 'node';
     showCtx(e.clientX, e.clientY, 'node');
   });
@@ -605,22 +639,17 @@ function bindNodeOuterEvents(el, node) {
 function bindNodeInnerEvents(el, node) {
   el.querySelectorAll('textarea').forEach(ta => {
     autoH(ta);
+    ta.addEventListener('focus', () => el.classList.add('editing'));
+    ta.addEventListener('blur', () => {
+      el.classList.remove('editing');
+      el.classList.toggle('body-empty', !(node.body || '').trim());
+    });
     ta.addEventListener('input', () => {
       autoH(ta);
       if (ta.classList.contains('node-title')) node.title = ta.value;
       else node.body = ta.value;
     });
     ta.addEventListener('mousedown', e => e.stopPropagation());
-  });
-  el.querySelectorAll('.font-btn').forEach(btn => {
-    btn.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); });
-    btn.addEventListener('click', e => {
-      e.stopPropagation();
-      if (btn.dataset.action === 'font-up') node.fontSize = Math.min(32, (node.fontSize||14) + 2);
-      else node.fontSize = Math.max(8, (node.fontSize||14) - 2);
-      const ta = el.querySelector('.node-title');
-      if (ta) ta.style.fontSize = node.fontSize + 'px';
-    });
   });
   el.querySelectorAll('.conn-dot').forEach(dot => {
     dot.addEventListener('mousedown', e => {
@@ -642,8 +671,13 @@ function bindNodeInnerEvents(el, node) {
   if (rs) rs.addEventListener('mousedown', e => {
     e.stopPropagation(); e.preventDefault();
     resizingNode = node;
-    resizeStartW  = node.w || 220;
+    if (node.type === 'text') {
+      resizeStartFontSize = node.fontSize || 14;
+    } else {
+      resizeStartW = node.w || 220;
+    }
     resizeStartMX = e.clientX;
+    resizeStartMY = e.clientY;
   });
 }
 
@@ -665,6 +699,10 @@ function deselectAll() {
   groupsLayer.querySelectorAll('.group.selected').forEach(g => g.classList.remove('selected'));
   canvasEl.querySelectorAll('.line-el.selected').forEach(l => l.classList.remove('selected'));
   updateBPHandles();
+  // Reset hint to default
+  if (activeTool !== 'line') {
+    hintEl.textContent = 'Double-click → text · Right-drag → multi-select · Scroll → zoom';
+  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════
@@ -755,10 +793,12 @@ function renderGroup(g) {
   el.style.width=g.w+'px'; el.style.height=g.h+'px';
   el.style.borderColor = hexAlpha(g.color, 0.45);
   el.style.background  = hexAlpha(g.color, 0.055);
+  const handles = ['nw','n','ne','e','se','s','sw','w']
+    .map(p => `<div class="gr-handle" data-pos="${p}"></div>`).join('');
   el.innerHTML = `<div class="group-header">
     <div class="group-swatch" style="background:${g.color}" data-groupid="${g.id}"></div>
     <div class="group-name" contenteditable="true" spellcheck="false">${esc(g.name)}</div>
-  </div>`;
+  </div>${handles}`;
   const nameEl = el.querySelector('.group-name');
   nameEl.addEventListener('input', () => { g.name = nameEl.textContent.trim(); });
   nameEl.addEventListener('mousedown', e => e.stopPropagation());
@@ -766,12 +806,26 @@ function renderGroup(g) {
   const sw = el.querySelector('.group-swatch');
   sw.addEventListener('mousedown', e => { e.stopPropagation(); e.preventDefault(); });
   sw.addEventListener('click', e => { e.stopPropagation(); showGroupColorPicker(g, e.clientX, e.clientY); });
+  // Resize handles
+  el.querySelectorAll('.gr-handle').forEach(h => {
+    h.addEventListener('mousedown', e => {
+      e.stopPropagation(); e.preventDefault();
+      // Select group first so handles stay visible
+      deselectAll(); state.selectedGroupId = g.id; el.classList.add('selected');
+      resizingGroup = g;
+      grResizeMode = h.dataset.pos;
+      const p = s2c(e.clientX, e.clientY);
+      grResizeStart = { x: g.x, y: g.y, w: g.w, h: g.h, mx: p.x, my: p.y };
+    });
+  });
 }
 
 function bindGroupEvents(el, g) {
   el.addEventListener('mousedown', e => {
     if (e.button !== 0) return;
-    if (e.target.classList.contains('group-swatch') || e.target.classList.contains('group-name')) return;
+    if (e.target.classList.contains('group-swatch') ||
+        e.target.classList.contains('group-name') ||
+        e.target.classList.contains('gr-handle')) return;
     e.stopPropagation();
     deselectAll(); state.selectedGroupId = g.id; el.classList.add('selected');
     draggingGroup = g;
@@ -998,36 +1052,60 @@ function updateLassoEl() {
 function finishLasso() {
   isLassoing = false;
   lassoEl.style.display = 'none';
-  if (lassoRect.w < 20 || lassoRect.h < 20) return;
+  if (lassoRect.w < 12 || lassoRect.h < 12) return;
+  // Find nodes that intersect the lasso rect (not strictly inside)
   const inside = state.nodes.filter(n => {
     const el = document.getElementById(n.id);
     const inner = el ? el.querySelector('.node-inner') : null;
     const nw = inner ? inner.offsetWidth : 140, nh = inner ? inner.offsetHeight : 80;
-    return n.x >= lassoRect.x-10 && n.y >= lassoRect.y-10 &&
-           (n.x+nw) <= (lassoRect.x+lassoRect.w+10) &&
-           (n.y+nh) <= (lassoRect.y+lassoRect.h+10);
+    // Intersection test
+    return !(n.x > lassoRect.x + lassoRect.w ||
+             n.x + nw < lassoRect.x ||
+             n.y > lassoRect.y + lassoRect.h ||
+             n.y + nh < lassoRect.y);
   });
   if (!inside.length) return;
+  // Multi-select all of them (without creating a group)
+  deselectAll();
+  inside.forEach(n => selectNode(n.id, false));
+  // Update hint to tell user how to group
+  hintEl.textContent = `${inside.length} nodes selected · Right-click → Group · Esc to deselect`;
+}
+
+/** Compute bounding rect of currently selected nodes in canvas coords. */
+function selectedNodesBounds() {
+  if (!state.selectedIds.size) return null;
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  state.selectedIds.forEach(id => {
+    const n = state.nodes.find(n => n.id === id); if (!n) return;
+    const el = document.getElementById(id);
+    const inner = el ? el.querySelector('.node-inner') : null;
+    const nw = inner ? inner.offsetWidth : 140, nh = inner ? inner.offsetHeight : 80;
+    minX = Math.min(minX, n.x); minY = Math.min(minY, n.y);
+    maxX = Math.max(maxX, n.x + nw); maxY = Math.max(maxY, n.y + nh);
+  });
+  return { minX, minY, maxX, maxY };
+}
+
+/** Create a group around currently selected nodes. */
+function groupSelectedNodes() {
+  const b = selectedNodesBounds(); if (!b) return;
   const pad = 28;
-  const x = Math.min(...inside.map(n => n.x)) - pad;
-  const y = Math.min(...inside.map(n => n.y)) - pad - 16;
-  const x2 = Math.max(...inside.map(n => {
-    const el = document.getElementById(n.id);
-    const inner = el ? el.querySelector('.node-inner') : null;
-    return n.x + (inner ? inner.offsetWidth : 140);
-  }));
-  const y2 = Math.max(...inside.map(n => {
-    const el = document.getElementById(n.id);
-    const inner = el ? el.querySelector('.node-inner') : null;
-    return n.y + (inner ? inner.offsetHeight : 80);
-  }));
-  const g = createGroup(x, y, x2-x+pad, y2-y+pad, inside.map(n => n.id));
-  inside.forEach(n => n.groupId = g.id);
-  const nameEl = document.querySelector('#'+g.id+' .group-name');
-  if (nameEl) setTimeout(() => {
-    nameEl.focus();
-    const r = document.createRange(); r.selectNodeContents(nameEl);
-    const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+  const ids = [...state.selectedIds];
+  const g = createGroup(
+    b.minX - pad, b.minY - pad - 16,
+    (b.maxX - b.minX) + pad*2, (b.maxY - b.minY) + pad*2 + 16,
+    ids
+  );
+  ids.forEach(id => { const n = state.nodes.find(n => n.id === id); if (n) n.groupId = g.id; });
+  // Switch focus to the group's name field
+  setTimeout(() => {
+    const nameEl = document.querySelector('#'+g.id+' .group-name');
+    if (nameEl) {
+      nameEl.focus();
+      const r = document.createRange(); r.selectNodeContents(nameEl);
+      const s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    }
   }, 50);
 }
 
@@ -1049,7 +1127,14 @@ function setTool(tool) {
 wrapEl.addEventListener('contextmenu', e => {
   const onBg = e.target===wrapEl || e.target===canvasEl || e.target===wiresSvg
             || e.target===groupsLayer || e.target===lassoEl;
-  if (onBg) e.preventDefault();
+  if (!onBg) return;
+  e.preventDefault();
+  // If we have a multi-selection, show context menu on right-click of empty bg
+  if (state.selectedIds.size >= 2 && !isLassoing) {
+    ctxTargetId = null;
+    ctxTargetType = 'multi';
+    showCtx(e.clientX, e.clientY, 'multi');
+  }
 });
 
 wrapEl.addEventListener('mousedown', e => {
@@ -1113,10 +1198,23 @@ document.addEventListener('mousemove', e => {
 
   if (draggingNode) {
     const p = s2c(e.clientX, e.clientY);
-    draggingNode.x = p.x - dragOffX;
-    draggingNode.y = p.y - dragOffY;
-    const el = document.getElementById(draggingNode.id);
-    if (el) { el.style.left = draggingNode.x+'px'; el.style.top = draggingNode.y+'px'; }
+    const newX = p.x - dragOffX;
+    const newY = p.y - dragOffY;
+    const dx = newX - draggingNode.x;
+    const dy = newY - draggingNode.y;
+    if (multiDragStart && state.selectedIds.size > 1) {
+      // Move every selected node by the same delta
+      state.selectedIds.forEach(id => {
+        const n = state.nodes.find(n => n.id === id); if (!n) return;
+        n.x += dx; n.y += dy;
+        const e2 = document.getElementById(id);
+        if (e2) { e2.style.left = n.x+'px'; e2.style.top = n.y+'px'; }
+      });
+    } else {
+      draggingNode.x = newX; draggingNode.y = newY;
+      const el = document.getElementById(draggingNode.id);
+      if (el) { el.style.left = draggingNode.x+'px'; el.style.top = draggingNode.y+'px'; }
+    }
     updateAllWires();
     return;
   }
@@ -1152,10 +1250,47 @@ document.addEventListener('mousemove', e => {
     return;
   }
   if (resizingNode) {
-    resizingNode.w = Math.max(80, resizeStartW + (e.clientX - resizeStartMX) / zoom);
-    const inner = document.querySelector('#'+resizingNode.id+' .node-inner');
-    if (inner) inner.style.width = resizingNode.w+'px';
+    if (resizingNode.type === 'text') {
+      // Use the larger of horizontal/vertical drag distance to scale font size.
+      // Drag away from top-left = bigger; drag toward = smaller.
+      const dx = (e.clientX - resizeStartMX) / zoom;
+      const dy = (e.clientY - resizeStartMY) / zoom;
+      const delta = (dx + dy) / 2;  // average so both axes contribute
+      const newSize = Math.max(8, Math.min(64, resizeStartFontSize + delta * 0.18));
+      resizingNode.fontSize = newSize;
+      const titleTa = document.querySelector('#'+resizingNode.id+' .node-title');
+      const bodyTa  = document.querySelector('#'+resizingNode.id+' .node-body');
+      if (titleTa) titleTa.style.fontSize = newSize + 'px';
+      if (bodyTa)  bodyTa.style.fontSize  = Math.max(10, newSize - 2) + 'px';
+      // Re-fit textarea heights
+      if (titleTa) autoH(titleTa);
+      if (bodyTa)  autoH(bodyTa);
+    } else {
+      resizingNode.w = Math.max(80, resizeStartW + (e.clientX - resizeStartMX) / zoom);
+      const inner = document.querySelector('#'+resizingNode.id+' .node-inner');
+      if (inner) inner.style.width = resizingNode.w+'px';
+    }
     updateAllWires();
+    return;
+  }
+  if (resizingGroup) {
+    const p = s2c(e.clientX, e.clientY);
+    const dx = p.x - grResizeStart.mx;
+    const dy = p.y - grResizeStart.my;
+    let { x, y, w, h } = grResizeStart;
+    const mode = grResizeMode;
+    if (mode.includes('e')) w = Math.max(60, grResizeStart.w + dx);
+    if (mode.includes('w')) { const nw = Math.max(60, grResizeStart.w - dx); x = grResizeStart.x + (grResizeStart.w - nw); w = nw; }
+    if (mode.includes('s')) h = Math.max(40, grResizeStart.h + dy);
+    if (mode.includes('n')) { const nh = Math.max(40, grResizeStart.h - dy); y = grResizeStart.y + (grResizeStart.h - nh); h = nh; }
+    resizingGroup.x = x; resizingGroup.y = y; resizingGroup.w = w; resizingGroup.h = h;
+    const el = document.getElementById(resizingGroup.id);
+    if (el) {
+      el.style.left   = x + 'px';
+      el.style.top    = y + 'px';
+      el.style.width  = w + 'px';
+      el.style.height = h + 'px';
+    }
     return;
   }
   if (rotatingNode) {
@@ -1197,6 +1332,7 @@ document.addEventListener('mouseup', e => {
   draggingNode = null; resizingNode = null; rotatingNode = null;
   draggingGroup = null; draggingBP = null;
   draggingLineEnd = null; draggingLine = null;
+  resizingGroup = null; multiDragStart = null;
 
   if (lineDrawing) {
     lineDrawing = false;
@@ -1356,8 +1492,18 @@ document.getElementById('btn-clear').addEventListener('click', () => {
 // CONTEXT MENU
 // ═══════════════════════════════════════════════════════════════════════
 function showCtx(x, y, type) {
-  document.getElementById('ctx-wire').style.display = type==='wire' ? '' : 'none';
-  document.getElementById('ctx-dup').style.display  = type==='node' ? '' : 'none';
+  const canGroup = state.selectedIds.size >= 2;
+  const showWire = type === 'wire';
+  const showDup  = type === 'node' && !canGroup;
+  const showDel  = type !== 'multi' || canGroup;
+
+  // If menu would be empty, don't show it
+  if (!canGroup && !showWire && !showDup && !showDel) return;
+
+  document.getElementById('ctx-group').style.display = canGroup ? '' : 'none';
+  document.getElementById('ctx-wire').style.display  = showWire ? '' : 'none';
+  document.getElementById('ctx-dup').style.display   = showDup  ? '' : 'none';
+  document.getElementById('ctx-del').style.display   = showDel  ? '' : 'none';
   ctxMenu.style.cssText = `display:block;left:${x}px;top:${y}px`;
 }
 
@@ -1366,6 +1512,9 @@ document.addEventListener('click', () => {
   gcPicker.classList.remove('show');
 });
 
+document.getElementById('ctx-group').addEventListener('click', () => {
+  groupSelectedNodes();
+});
 document.getElementById('ctx-wire').addEventListener('click', () => {
   if (ctxTargetType === 'wire') addBreakpointAt(ctxTargetId, _ctxPos);
 });
@@ -1373,11 +1522,17 @@ document.getElementById('ctx-dup').addEventListener('click', () => {
   if (ctxTargetId) { selectNode(ctxTargetId, true); duplicateSelected(); }
 });
 document.getElementById('ctx-del').addEventListener('click', () => {
+  // Multi-selection delete
+  if (state.selectedIds.size >= 2 && (ctxTargetType === 'node' || ctxTargetType === 'multi')) {
+    deleteSelected();
+    return;
+  }
   if (!ctxTargetId) return;
   if      (ctxTargetType === 'wire')  state.selectedWireId = ctxTargetId;
   else if (ctxTargetType === 'group') state.selectedGroupId = ctxTargetId;
   else if (ctxTargetType === 'line')  state.selectedLineId = ctxTargetId;
-  else                                 selectNode(ctxTargetId, true);
+  else if (ctxTargetType === 'node' && !state.selectedIds.has(ctxTargetId))
+                                       selectNode(ctxTargetId, true);
   deleteSelected();
 });
 
@@ -1467,10 +1622,10 @@ if (!state.nodes.length) {
   const cx = r.width / 2;
   const cy = r.height / 2;
 
-  const n1 = createNode('text', cx - 80,  cy - 30, { title: '🧠 My Mind Map', body: 'Double-click to add nodes\nRight-drag to group · Scroll to zoom', fontSize: 16 });
-  const n2 = createNode('text', cx + 200, cy - 90, { title: 'Idea A', body: 'Hover → connect dots to wire' });
+  const n1 = createNode('text', cx - 80,  cy - 30, { title: '🧠 My Mind Map', body: 'Double-click → add node\nRight-drag → multi-select\nDrag corner → resize text', fontSize: 16 });
+  const n2 = createNode('text', cx + 200, cy - 90, { title: 'Idea A' });
   const n3 = createNode('text', cx + 200, cy + 40, { title: 'Idea B', body: 'Right-click a wire → Add Breakpoint' });
-  const n4 = createNode('text', cx + 480, cy - 30, { title: 'Idea C', body: 'Use the Line tool for annotations' });
+  const n4 = createNode('text', cx + 480, cy - 30, { title: 'Idea C' });
   createWire(n1.id, 'right', n2.id, 'left');
   createWire(n1.id, 'right', n3.id, 'left');
   createWire(n2.id, 'right', n4.id, 'left');
