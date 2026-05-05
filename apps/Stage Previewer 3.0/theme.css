@@ -10,7 +10,7 @@
 :root {
 
   /* ── TYPEFACES ─────────────────────────────────────────────────── */
-  --font-mono : 'IBM Plex Mono', monospace;   /* code / UI labels    */
+  --font-mono : 'Quicksand', sans-serif;   /* code / UI labels    */
   --font-sans : 'Syne', sans-serif;           /* logo / headings     */
 
   /* ── COLOURS ───────────────────────────────────────────────────── */
