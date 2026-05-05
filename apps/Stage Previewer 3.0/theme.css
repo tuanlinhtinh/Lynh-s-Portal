@@ -1,7 +1,7 @@
 /* ================================================================
    ENTERSPACE 3D VIEWER — THEME
    Edit values here to restyle the entire app.
-   Keep this file in the same folder as 3d-viewer.html
+   Keep this file in the same folder as index.html
    ================================================================ */
 
 /* ── FONTS ──────────────────────────────────────────────────────── */
@@ -25,7 +25,7 @@
 
   /* Text */
   --c-text        : #e0e0e8;   /* primary text                        */
-  --c-muted       : #555568;   /* secondary / hint text               */
+  --c-muted       : #7a7a7a;   /* secondary / hint text               */
 
   /* Accent */
   --c-accent      : #c8ff6e;   /* highlight, selection, active state  */
@@ -68,7 +68,7 @@
   /* ── FONT SIZES ────────────────────────────────────────────────── */
   --fs-logo         : 12px;   /* panel logo                          */
   --fs-logo-loading : 18px;   /* loading screen logo                 */
-  --fs-zone-title   : 9px;    /* zone section labels (OBJECTS etc.)  */
+  --fs-zone-title   : 11px;    /* zone section labels (OBJECTS etc.)  */
   --fs-obj-item     : 11px;   /* object list item name               */
   --fs-import-btn   : 8px;    /* + IMPORT button                     */
   --fs-action-btn   : 10px;   /* CHANGE COLOR / CAPTURE buttons      */
@@ -84,7 +84,7 @@
   --fs-loading-msg  : 9px;    /* loading screen sub-text             */
   --fs-video-name   : 9px;    /* video name in playbar               */
   --fs-time-display : 9px;    /* time counter in playbar             */
-  --fs-empty-hint   : 9px;    /* empty state hints                   */
+  --fs-empty-hint   : 11px;    /* empty state hints                   */
 
   /* ── LETTER SPACING ────────────────────────────────────────────── */
   --ls-logo         : 0.08em;
@@ -163,7 +163,7 @@
   --tr-medium  : 0.12s;
   --tr-status  : 0.28s;
   --tr-videobar: 0.22s;
-  --tr-loading : 0.3s;
+  --tr-loading : 1s;
 
   /* ── ZONE FLEX RATIOS ───────────────────────────────────────────── */
   --zone-object-flex : 1;   /* object zone relative height            */
