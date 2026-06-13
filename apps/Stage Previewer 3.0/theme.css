@@ -171,7 +171,7 @@
 
   /* ── 3D SCENE ───────────────────────────────────────────────────── */
   --scene-bg            : #080808;  /* Three.js scene background       */
-  --camera-fov          : 30;       /* degrees (40 ≈ 50mm equiv)       */
+  --camera-fov          : 80;       /* degrees (40 ≈ 50mm equiv)       */
   --camera-near         : 0.01;
   --camera-far          : 1000;
   --shadow-map-size     : 2048;     /* shadow map resolution (px²)     */
